@@ -37,9 +37,23 @@ public class LogglyTree extends Timber.Tree {
      * @param token Loggly token from https://www.loggly.com/docs/customer-token-authentication-token/
      */
     public LogglyTree(String token) {
+        this(token, null);
+    }
+
+    /**
+     * Creates a <a href="https://github.com/JakeWharton/timber">Timber</a>
+     * tree for posting messages to <a href="http://loggly.com">Loggly</a>
+     * @param token Loggly token from https://www.loggly.com/docs/customer-token-authentication-token/
+     * @param formatter allows to specify custom formatter
+     */
+    public LogglyTree(String token, IFormatter formatter) {
         loggly = new LogglyClient(token);
         handler = new DummyCallback();
-        formatter = new JsonFormatter();
+        if (formatter != null) {
+            this.formatter = formatter;
+        } else {
+            this.formatter = new JsonFormatter();
+        }
     }
 
     /**
