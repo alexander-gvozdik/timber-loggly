@@ -19,15 +19,22 @@ import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Formats log messages in JSON
  */
-class JsonFormatter implements IFormatter {
+public class JsonFormatter implements IFormatter {
 
     private Map<Integer, String> LEVELS;
+    //Loggly understands ISO 8601 format
+    private DateFormat ios8601DateFormat;
 
     /**
      * Constructs a formatter that creates a JSON object from log-event data
@@ -43,6 +50,18 @@ class JsonFormatter implements IFormatter {
     }
 
     /**
+     * Constructor allowing to specify whether to append timestamp to messages in JSON
+     * @param appendTimestamp
+     */
+    public JsonFormatter(Boolean appendTimestamp) {
+        this();
+        if (appendTimestamp) {
+            ios8601DateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+            ios8601DateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+    }
+
+    /**
      * Gets the JSON representation of a log event
      * @param priority log severity level
      * @param tag correlating string
@@ -54,6 +73,9 @@ class JsonFormatter implements IFormatter {
     public String format(int priority, String tag, String message, Throwable t) {
         StringBuilder formatted = new StringBuilder();
         formatted.append("{");
+        if (ios8601DateFormat != null) {
+            formatted.append("\"timestamp\": \"").append(ios8601DateFormat.format(new Date())).append("\", ");
+        }
         formatted.append("\"level\": \"").append(toLevel(priority)).append("\"");
         appendMessage(formatted, message);
         appendThrowable(formatted, t);

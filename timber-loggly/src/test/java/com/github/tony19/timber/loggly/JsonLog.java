@@ -19,6 +19,7 @@ package com.github.tony19.timber.loggly;
  * {@code JsonFormatter} output object, used for testing
  */
 class JsonLog {
+    public String timestamp;
     public String level;
     public String message;
     public String exception;

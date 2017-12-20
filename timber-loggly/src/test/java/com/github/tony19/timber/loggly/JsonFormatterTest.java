@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -129,6 +130,12 @@ public class JsonFormatterTest {
     public void formatRendersWarningLevel() throws IOException {
         final JsonLog log = getLog(Log.WARN, "tag", "message", new RuntimeException());
         assertThat(log.level, is(equalTo("WARN")));
+    }
+
+    @Test
+    public void formatRendersTimestamp() throws IOException {
+        final JsonLog log = getLog(Log.INFO, "tag", "message", new RuntimeException());
+        assertNotNull(log.timestamp);
     }
 
     private JsonLog getLog(int priority, String tag, String message, Throwable t) throws IOException {
